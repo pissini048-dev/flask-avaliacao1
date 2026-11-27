@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">{% block title %}Posts{% endblock %}</h1>
+    {% if g.user %}
+      <a class="btn btn-primary" href="{{ url_for('blog.create') }}">Novo Post</a>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for post in posts %}
+      <div class="col">
+        <article class="card shadow-sm h-100">
+          {% if post.imagem_post %}
+            <img
+              src="{{ url_for('static', filename='uploads/' + post.imagem_post) }}"
+              class="card-img-top"
+              alt="Imagem do post {{ post.title }}"
+              style="max-height: 240px; object-fit: cover;"
+            >
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <h2 class="h5 card-title mb-0">{{ post.title }}</h2>
+              {% if g.user and g.user.id == post.author_id %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('blog.update', id=post.id) }}">Editar</a>
+              {% endif %}
+            </div>
+            <p class="card-subtitle text-muted small mb-3">
+              Por {{ post.author.username }} em {{ post.created.strftime('%d/%m/%Y %H:%M') }}
+            </p>
+            <p class="card-text flex-grow-1">{{ post.body }}</p>
+          </div>
+        </article>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info mb-0">Nenhum post publicado ainda.</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
